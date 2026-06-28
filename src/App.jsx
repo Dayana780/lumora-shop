@@ -14,6 +14,7 @@ import MainLayout from "./layouts/MainLayout";
 import  AuthProvider  from "./context/AuthContext";
 import  CartProvider  from "./context/CartContext";
 import  WishlistProvider  from "./context/WishlistContext";
+import ProductDetails from "./pages/ProductDetails";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route element={<MainLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="shop" element={<Shop />} />
+              <Route path="product/:id" element={<ProductDetails />} />
               <Route path="cart" element={<Cart />} />
               <Route path="wishlist" element={<Wishlist />} />
               <Route path="login" element={<Login />} />
