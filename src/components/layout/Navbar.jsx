@@ -3,7 +3,7 @@ import { useContext } from "react"
 import { CartContext } from "../../context/CartContext"
 import { WishlistContext } from "../../context/WishlistContext"
 function Navbar() {
-    const cartCount= useContext(CartContext)
+    const {cart}= useContext(CartContext)
     const wishlistCount= useContext(WishlistContext)
     return (
         <nav className="flex gap-2 p-2 bg-pink-300 justify-between">
@@ -15,7 +15,7 @@ function Navbar() {
             </div>
             
             <div className="flex gap-2">
-                <Link to="/cart">cart({cartCount.cartCount})</Link>
+                <Link to="/cart">cart({cart.length})</Link>
                 <Link to="/wishlist">wishlist({wishlistCount.countOption})</Link>
                 <Link to="/login">login</Link>
             </div>

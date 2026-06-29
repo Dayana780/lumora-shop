@@ -1,14 +1,32 @@
-import { createContext } from "react";
+import { createContext, useState } from "react";
 
 const CartContext=createContext();
 
 function CartProvider ({children}){
-    const cart={
-         cartCount: 3
-    }
+    const [cart , setCart]=useState([])
+//    const cart = [
+//     {
+//         id: "1",
+//         name: "Lip Tint",
+//         price: 250
+//     },
+
+//     {
+//         id: "2",
+//         name: "Cleanser",
+//         price: 400
+//     }
+// ];
+function addToCart(product){
+   setCart([...cart , product])
+};
+
 
     return(
-        <CartContext.Provider value={cart}>
+        <CartContext.Provider value={{
+    cart,
+    addToCart
+}}>
             {children}
         </CartContext.Provider>
     )
