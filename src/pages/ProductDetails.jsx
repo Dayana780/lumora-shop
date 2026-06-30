@@ -7,7 +7,7 @@ function ProductDetails() {
     const { id } = useParams();
 
     const { addToCart } = useContext(CartContext);
-
+    
     const product = products.find((product) => product.id === id);
 
     if (!product) {
