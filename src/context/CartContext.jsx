@@ -33,13 +33,58 @@ function CartProvider({ children }) {
       );
     }
   }
+function removeFromCart(id) {
+  setCart(cart.filter((item) => item.id !== id));
+}
+function decreaseQuantity(id) {
+  const product = cart.find((item) => item.id === id);
+
+  if (product.quantity === 1) {
+    removeFromCart(id);
+    return;
+  }
+
+  setCart(
+    cart.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          quantity: item.quantity - 1,
+        };
+      }
+
+      return item;
+    })
+  );
+}
+function increaseQuantity(id) {
+  const product = cart.find((item) => item.id === id);
+if (!product) return;
+
+
+  setCart(
+    cart.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          quantity: item.quantity + 1,
+        };
+      }
+
+      return item;
+    })
+  );
+}
 
   return (
     <CartContext.Provider
-      value={{
-        cart,
-        addToCart,
-      }}
+   value={{
+  cart,
+  addToCart,
+  removeFromCart,
+  decreaseQuantity,
+  increaseQuantity
+}}
     >
       {children}
     </CartContext.Provider>
