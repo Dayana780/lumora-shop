@@ -11,7 +11,9 @@ const [data, setData] = useState([]);
     setError(null);
         const res = await fetch(url);
 
-       
+       console.log(res.status);
+console.log(res.ok);
+
         if (!res.ok) {
           throw new Error("Failed to fetch data");
         }
