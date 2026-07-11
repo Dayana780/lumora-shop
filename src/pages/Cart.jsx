@@ -1,37 +1,37 @@
-import { useContext } from "react";
-import { CartContext } from "../context/CartContext"; // مسیر را تنظیم کنید
+import { useCart } from "../context/CartContext"; // مسیر را تنظیم کنید
 
 function Cart() {
-    const { cart ,removeFromCart , decreaseQuantity,
-  increaseQuantity } = useContext(CartContext);
-const totalPrice = cart.reduce((total, product) => {
-  return total + product.price * product.quantity;
-}, 0);
-    return (
-        <div>
-            <h2>سبد خرید</h2>
-            {cart.length === 0 ? (
-                <p>سبد خرید خالی است</p>
-            ) : (
-                cart.map((product, index) => (
-                    <div key={product.id || index}>
-                        <h3>{product.name}</h3>
-                       <p>تعداد: {product.quantity}</p>
-                       <p>قیمت: {product.price}</p>
-                        <button onClick={()=>removeFromCart(product.id)}>remove</button>
-                        <button onClick={()=>increaseQuantity(product.id)}>+</button>
-                                                <hr />
+  const {
+    cart,
+    removeFromCart,
+    decreaseQuantity,
+    increaseQuantity,
+    totalPrice,
+  } = useCart();
 
-                        <button onClick={()=>decreaseQuantity(product.id)}>-</button>
-                        <hr />
-                    </div>
+  return (
+    <div>
+      <h2>سبد خرید</h2>
+      {cart.length === 0 ? (
+        <p>سبد خرید خالی است</p>
+      ) : (
+        cart.map((product, index) => (
+          <div key={product.id || index}>
+            <h3>{product.name}</h3>
+            <p>تعداد: {product.quantity}</p>
+            <p>قیمت: {product.price}</p>
+            <button onClick={() => removeFromCart(product.id)}>remove</button>
+            <button onClick={() => increaseQuantity(product.id)}>+</button>
+            <hr />
 
-                ))
-            )}
-                                                       <h2>مجموع: {totalPrice} تومان</h2>
-
-        </div>
-    );
+            <button onClick={() => decreaseQuantity(product.id)}>-</button>
+            <hr />
+          </div>
+        ))
+      )}
+      <h2>مجموع: {totalPrice} تومان</h2>
+    </div>
+  );
 }
 
 export default Cart;
