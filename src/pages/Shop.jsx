@@ -8,6 +8,7 @@ function Shop() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [page, setPage] = useState(1);
+  const [allProducts, setAllProducts] = useState([]);
   const loaderRef = useRef(null);
   const limit = 20;
   const { data, loading, error } = useFetch(
@@ -17,10 +18,10 @@ function Shop() {
   const products = data?.products || [];
 
   const filteredProducts = useMemo(() => {
-    return products.filter((product) =>
+    return allProducts.filter((product) =>
       product.title.toLowerCase().includes(search.toLowerCase()),
     );
-  }, [products, search]);
+  }, [allProducts, search]);
 
   const sortedProducts = useMemo(() => {
     const sorted = [...filteredProducts];
@@ -54,12 +55,13 @@ function Shop() {
   }, [page]);
 
   useEffect(() => {
-    console.log("observer hast");
+    // console.log("observer hast");
     const observer = new IntersectionObserver(
       (entries) => {
-        console.log(entries[0]);
+        // console.log(entries[0]);
         const entry = entries[0];
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && !loading) {
+          console.log("load next page");
           setPage((prev) => prev + 1);
         }
       },
@@ -70,8 +72,17 @@ function Shop() {
     }
     return () => observer.disconnect();
   }, [loading]); // ✅ فقط این خط رو تغییر دادم
-
-  if (loading) return <Loading />;
+  useEffect(() => {
+    if (data?.products) {
+      setAllProducts((prev) => {
+        const newProducts = data.products.filter(
+          (product) => !prev.some((item) => item.id === product.id),
+        );
+        return [...prev, ...newProducts];
+      });
+    }
+  }, [data]);
+  if (loading && allProducts.length === 0) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
 
   function handleSearch(e) {
@@ -93,7 +104,7 @@ function Shop() {
         <option value="az">A-Z</option>
         <option value="za">Z-A</option>
       </select>
-      {sortedProducts.map((product) => (
+      {allProducts.map((product) => (
         <ProductCard
           key={product.id}
           id={product.id}
@@ -102,14 +113,9 @@ function Shop() {
           image={product.thumbnail}
         />
       ))}
-      <div ref={loaderRef} className="bg-red-500 h-40 mt-10"></div>{" "}
+      <div ref={loaderRef}>{loading && <Loading />}</div>{" "}
       {/* ✅ اینجا رو هم درست کردم */}
       <p className="text-center">{page}</p>
-      <button onClick={() => setPage((prev) => prev + 1)}>Next</button>{" "}
-      <br></br>
-      <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))}>
-        prev
-      </button>
     </div>
   );
 }
