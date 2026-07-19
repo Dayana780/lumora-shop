@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/ui/Loading";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import useFetch from "../hooks/useFetch";
 
 function Shop() {
-  // ✅ همه Hookها در سطح بالا و قبل از هر شرطی
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [page, setPage] = useState(1);
+  const loaderRef = useRef(null);
   const limit = 20;
   const { data, loading, error } = useFetch(
     `https://dummyjson.com/products?limit=${limit}&skip=${(page - 1) * limit}`,
@@ -16,7 +16,6 @@ function Shop() {
 
   const products = data?.products || [];
 
-  // ✅ useMemoها قبل از return های شرطی
   const filteredProducts = useMemo(() => {
     return products.filter((product) =>
       product.title.toLowerCase().includes(search.toLowerCase()),
@@ -50,12 +49,28 @@ function Shop() {
     return sorted;
   }, [filteredProducts, sortBy]);
 
-  // ✅ useEffect هم قبل از return ها
   useEffect(() => {
     console.log(`fetching page ${page}`);
   }, [page]);
 
-  // ❗ return های شرطی بعد از همه Hookها
+  useEffect(() => {
+    console.log("observer hast");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        console.log(entries[0]);
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1 },
+    );
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+    return () => observer.disconnect();
+  }, [loading]); // ✅ فقط این خط رو تغییر دادم
+
   if (loading) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
 
@@ -87,6 +102,8 @@ function Shop() {
           image={product.thumbnail}
         />
       ))}
+      <div ref={loaderRef} className="bg-red-500 h-40 mt-10"></div>{" "}
+      {/* ✅ اینجا رو هم درست کردم */}
       <p className="text-center">{page}</p>
       <button onClick={() => setPage((prev) => prev + 1)}>Next</button>{" "}
       <br></br>
