@@ -3,12 +3,15 @@ import ProductCard from "../components/ProductCard";
 import Loading from "../components/ui/Loading";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import useFetch from "../hooks/useFetch";
+import { useSearchParams } from "react-router-dom";
 
 function Shop() {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [page, setPage] = useState(1);
   const [allProducts, setAllProducts] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
   const limit = 20;
   const { data, loading, error } = useFetch(
@@ -60,7 +63,8 @@ function Shop() {
       (entries) => {
         // console.log(entries[0]);
         const entry = entries[0];
-        if (entry.isIntersecting && !loading) {
+
+        if (entry.isIntersecting && !loading && hasMore) {
           console.log("load next page");
           setPage((prev) => prev + 1);
         }
@@ -69,28 +73,48 @@ function Shop() {
     );
     if (loaderRef.current) {
       observer.observe(loaderRef.current);
+      console.log(loaderRef);
     }
     return () => observer.disconnect();
-  }, [loading]); // ✅ فقط این خط رو تغییر دادم
+  }, [loading, hasMore]);
   useEffect(() => {
     if (data?.products) {
       setAllProducts((prev) => {
         const newProducts = data.products.filter(
           (product) => !prev.some((item) => item.id === product.id),
         );
-        return [...prev, ...newProducts];
+        const updatedProducts = [...prev, ...newProducts];
+        if (updatedProducts.length >= data.total) {
+          setHasMore(false);
+        }
+        return updatedProducts;
       });
     }
   }, [data]);
+  useEffect(() => {
+    const sortFormUrl = searchParams.get("sort");
+    const searchFormUrl = searchParams.get("search");
+    if (searchFormUrl && sortFormUrl) {
+      setSortBy(sortFormUrl);
+    }
+    if (searchFormUrl) {
+      setSearch(searchFormUrl);
+    }
+  }, []);
   if (loading && allProducts.length === 0) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
 
   function handleSearch(e) {
-    setSearch(e.target.value);
+    const value = e.target.value;
+    setSearch(value);
+    setSearchParams({ search: value, sort: sortBy });
   }
 
   function handleSort(e) {
+    const value = e.target.value;
+
     setSortBy(e.target.value);
+    setSearchParams({ search, sort: value });
   }
 
   return (
@@ -104,7 +128,7 @@ function Shop() {
         <option value="az">A-Z</option>
         <option value="za">Z-A</option>
       </select>
-      {allProducts.map((product) => (
+      {sortedProducts.map((product) => (
         <ProductCard
           key={product.id}
           id={product.id}
@@ -114,7 +138,6 @@ function Shop() {
         />
       ))}
       <div ref={loaderRef}>{loading && <Loading />}</div>{" "}
-      {/* ✅ اینجا رو هم درست کردم */}
       <p className="text-center">{page}</p>
     </div>
   );
