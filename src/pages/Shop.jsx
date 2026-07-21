@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/ui/Loading";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import useFetch from "../hooks/useFetch";
 import useDebounce from "../hooks/useDebounce";
-import { useSearchParams } from "react-router-dom";
 
 function Shop() {
   const [search, setSearch] = useState("");
@@ -20,13 +20,11 @@ function Shop() {
     `https://dummyjson.com/products?limit=${limit}&skip=${(page - 1) * limit}`,
   );
 
-  const products = data?.products || [];
-
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) =>
       product.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
-  }, [allProducts, search]);
+  }, [allProducts, debouncedSearch]);
 
   const sortedProducts = useMemo(() => {
     const sorted = [...filteredProducts];
@@ -35,19 +33,15 @@ function Shop() {
       case "low":
         sorted.sort((a, b) => a.price - b.price);
         break;
-
       case "high":
         sorted.sort((a, b) => b.price - a.price);
         break;
-
       case "az":
         sorted.sort((a, b) => a.title.localeCompare(b.title));
         break;
-
       case "za":
         sorted.sort((a, b) => b.title.localeCompare(a.title));
         break;
-
       default:
         break;
     }
@@ -55,30 +49,58 @@ function Shop() {
     return sorted;
   }, [filteredProducts, sortBy]);
 
+  // خواندن پارامترهای URL در اولین رندر
+  useEffect(() => {
+    const sortFormUrl = searchParams.get("sort");
+    const searchFormUrl = searchParams.get("search");
+
+    if (searchFormUrl) {
+      setSearch(searchFormUrl);
+    }
+    if (sortFormUrl) {
+      setSortBy(sortFormUrl);
+    }
+  }, []);
+
+  // ریست کردن صفحه و محصولات هنگام تغییر جستجو
+  useEffect(() => {
+    setPage(1);
+    setAllProducts([]);
+    setHasMore(true);
+  }, [debouncedSearch]);
+
+  // لاگ کردن صفحه
   useEffect(() => {
     console.log(`fetching page ${page}`);
   }, [page]);
 
+  // Intersection Observer برای infinite scroll
   useEffect(() => {
-    // console.log("observer hast");
     const observer = new IntersectionObserver(
       (entries) => {
-        // console.log(entries[0]);
         const entry = entries[0];
-
         if (entry.isIntersecting && !loading && hasMore) {
           console.log("load next page");
           setPage((prev) => prev + 1);
         }
       },
-      { threshold: 1 },
+      { threshold: 0.1 },
     );
-    if (loaderRef.current) {
-      observer.observe(loaderRef.current);
-      console.log(loaderRef);
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
     }
-    return () => observer.disconnect();
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+      observer.disconnect();
+    };
   }, [loading, hasMore]);
+
+  // ذخیره محصولات جدید
   useEffect(() => {
     if (data?.products) {
       setAllProducts((prev) => {
@@ -93,31 +115,30 @@ function Shop() {
       });
     }
   }, [data]);
-  useEffect(() => {
-    const sortFormUrl = searchParams.get("sort");
-    const searchFormUrl = searchParams.get("search");
-    if (searchFormUrl && sortFormUrl) {
-      setSortBy(sortFormUrl);
-    }
-    if (searchFormUrl) {
-      setSearch(searchFormUrl);
-    }
+
+  const handleSearch = useCallback(
+    (e) => {
+      const value = e.target.value;
+      setSearch(value);
+      setSearchParams({ search: value, sort: sortBy });
+    },
+    [sortBy, setSearchParams],
+  );
+
+  const handleSort = useCallback(
+    (e) => {
+      const value = e.target.value;
+      setSortBy(value);
+      setSearchParams({ search, sort: value });
+    },
+    [search, setSearchParams],
+  );
+
+  const handleAddToCart = useCallback((id) => {
+    console.log("add product", id);
   }, []);
   if (loading && allProducts.length === 0) return <Loading />;
   if (error) return <ErrorMessage message={error} />;
-
-  function handleSearch(e) {
-    const value = e.target.value;
-    setSearch(value);
-    setSearchParams({ search: value, sort: sortBy });
-  }
-
-  function handleSort(e) {
-    const value = e.target.value;
-
-    setSortBy(e.target.value);
-    setSearchParams({ search, sort: value });
-  }
 
   return (
     <div>
@@ -137,9 +158,10 @@ function Shop() {
           name={product.title}
           price={product.price}
           image={product.thumbnail}
+          onAddCart={handleAddToCart}
         />
       ))}
-      <div ref={loaderRef}>{loading && <Loading />}</div>{" "}
+      <div ref={loaderRef}>{loading && <Loading />}</div>
       <p className="text-center">{page}</p>
     </div>
   );
