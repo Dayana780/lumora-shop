@@ -3,6 +3,7 @@ import ProductCard from "../components/ProductCard";
 import Loading from "../components/ui/Loading";
 import ErrorMessage from "../components/ui/ErrorMessage";
 import useFetch from "../hooks/useFetch";
+import useDebounce from "../hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 
 function Shop() {
@@ -14,6 +15,7 @@ function Shop() {
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
   const limit = 20;
+  const debouncedSearch = useDebounce(search, 500);
   const { data, loading, error } = useFetch(
     `https://dummyjson.com/products?limit=${limit}&skip=${(page - 1) * limit}`,
   );
@@ -22,7 +24,7 @@ function Shop() {
 
   const filteredProducts = useMemo(() => {
     return allProducts.filter((product) =>
-      product.title.toLowerCase().includes(search.toLowerCase()),
+      product.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
     );
   }, [allProducts, search]);
 
