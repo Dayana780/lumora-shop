@@ -35,6 +35,7 @@ function AddProductModal({
           updateProduct={updateProduct}
           selectedProduct={selectedProduct}
           onClose={onClose}
+          addProduct={addProduct}
         />
       </div>
     </div>

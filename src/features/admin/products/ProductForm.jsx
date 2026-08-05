@@ -9,8 +9,9 @@ const initialForm = {
   description: "",
 };
 
-function ProductForm({ addProduct, onClose, selectedProduct, updateProduct }) {
+function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
   const [formData, setFormData] = useState(initialForm);
+  const [preview, setPreview] = useState("");
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -21,32 +22,54 @@ function ProductForm({ addProduct, onClose, selectedProduct, updateProduct }) {
     }));
   }
 
+  function handleImageChange(e) {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      image: file,
+    }));
+
+    setPreview(URL.createObjectURL(file));
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    const hasEmptyFild = Object.values(formData).some((value) => {
-      if (typeof value === "string") {
-        return value.trim() === "";
-      }
 
-      return false;
+    const hasEmptyField = Object.entries(formData).some(([key, value]) => {
+      if (key === "image") return false;
+
+      return typeof value === "string" && value.trim() === "";
     });
-    if (hasEmptyFild) {
-      alert("por kon");
+
+    if (hasEmptyField) {
+      alert("Please fill all fields");
       return;
     }
+
     if (selectedProduct) {
-      updateProduct(formData);
+      updateProduct({
+        ...formData,
+        id: selectedProduct.id,
+      });
     } else {
       addProduct(formData);
     }
+
     setFormData(initialForm);
+    setPreview("");
     onClose();
   }
+
   useEffect(() => {
     if (selectedProduct) {
       setFormData(selectedProduct);
+      setPreview(selectedProduct.image);
     } else {
       setFormData(initialForm);
+      setPreview("");
     }
   }, [selectedProduct]);
 
@@ -87,10 +110,9 @@ function ProductForm({ addProduct, onClose, selectedProduct, updateProduct }) {
       />
 
       <input
-        name="image"
-        placeholder="Image URL"
-        value={formData.image}
-        onChange={handleChange}
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
         className="w-full border rounded p-2"
       />
 
@@ -102,8 +124,19 @@ function ProductForm({ addProduct, onClose, selectedProduct, updateProduct }) {
         className="w-full border rounded p-2"
       />
 
-      <button className="w-full bg-pink-500 text-white rounded py-2">
-        Save Product
+      {preview && (
+        <img
+          src={preview}
+          alt="Preview"
+          className="w-40 h-40 object-cover rounded border"
+        />
+      )}
+
+      <button
+        type="submit"
+        className="w-full bg-pink-500 text-white rounded py-2"
+      >
+        {selectedProduct ? "Update Product" : "Save Product"}
       </button>
     </form>
   );

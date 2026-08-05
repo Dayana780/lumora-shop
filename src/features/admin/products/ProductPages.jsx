@@ -69,7 +69,10 @@ function ProductPage() {
           updateProduct={handleUpdateProduct}
           selectedProduct={selectedProduct}
           addProduct={handleAddProduct}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            setSelectedProduct(null);
+          }}
         />
       )}
     </div>
