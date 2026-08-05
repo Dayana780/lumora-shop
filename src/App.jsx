@@ -19,10 +19,10 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import GuestRoute from "./components/common/GuestRoute";
 import Loading from "./components/ui/Loading";
 import AdminLayout from "./layouts/AdminLayout";
-import OrderTable from "./features/admin/OrderTable";
-import UsersTable from "./features/admin/UserTable";
+import OrderTable from "./features/admin/orders/OrderTable";
+import UsersTable from "./features/admin/users/UserTable";
 import AdminRoute from "./components/common/AdminRoute";
-import ProductsPage from "./features/admin/ProductPages";
+import ProductsPage from "./features/admin/products/ProductPages";
 function App() {
   return (
     <AuthProvider>

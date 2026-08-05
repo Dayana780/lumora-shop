@@ -1,6 +1,6 @@
 import ProductRow from "./ProductRow";
 
-function ProductTable({ products }) {
+function ProductTable({ products, onDelete, onEdit }) {
   return (
     <table className="w-full border">
       <thead>
@@ -19,7 +19,12 @@ function ProductTable({ products }) {
 
       <tbody>
         {products.map((product) => (
-          <ProductRow key={product.id} product={product} />
+          <ProductRow
+            key={product.id}
+            onEdit={onEdit}
+            product={product}
+            onDelete={onDelete}
+          />
         ))}
       </tbody>
     </table>

@@ -1,6 +1,7 @@
-function AddProductButton() {
+function AddProductButton({ onClick }) {
   return (
     <button
+      onClick={onClick}
       className="
       bg-pink-500
       text-white
