@@ -12,6 +12,7 @@ function ProductPage() {
   const [productList, setProductList] = useState(products);
   const [showModal, setShowModal] = useState(false);
   const [category, setCategory] = useState("all");
+  const [sort, setSort] = useState("default");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const searchProducts = productList.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase()),
@@ -23,6 +24,23 @@ function ProductPage() {
       product.category.toLocaleLowerCase() === category.toLocaleLowerCase()
     );
   });
+  const sortedProducts = [...filteredProducts];
+
+  if (sort === "price-low") {
+    sortedProducts.sort((a, b) => a.price - b.price);
+  }
+
+  if (sort === "price-high") {
+    sortedProducts.sort((a, b) => b.price - a.price);
+  }
+
+  if (sort === "name") {
+    sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  if (sort === "stock") {
+    sortedProducts.sort((a, b) => b.stock - a.stock);
+  }
   function handleAddProduct(product) {
     const newProdudt = {
       ...product,
@@ -74,10 +92,21 @@ function ProductPage() {
         <option value="face">Face</option>
         <option value="hair">Hair</option>
       </select>
+      <select value={sort} onChange={(e) => setSort(e.target.value)}>
+        <option value="default">Default</option>
+
+        <option value="price-low">Price Low → High</option>
+
+        <option value="price-high">Price High → Low</option>
+
+        <option value="name">Name A → Z</option>
+
+        <option value="stock">Stock</option>
+      </select>
       <ProductTable
         onEdit={handleEditClick}
         onDelete={handleDelete}
-        products={filteredProducts}
+        products={sortedProducts}
       />
       {showModal && (
         <AddProductModal
