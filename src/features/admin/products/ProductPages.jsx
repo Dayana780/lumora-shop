@@ -11,10 +11,18 @@ function ProductPage() {
   const [search, setSearch] = useState("");
   const [productList, setProductList] = useState(products);
   const [showModal, setShowModal] = useState(false);
+  const [category, setCategory] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const filteredProducts = productList.filter((product) =>
+  const searchProducts = productList.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase()),
   );
+  const filteredProducts = searchProducts.filter((product) => {
+    if (category === "all") return true;
+
+    return (
+      product.category.toLocaleLowerCase() === category.toLocaleLowerCase()
+    );
+  });
   function handleAddProduct(product) {
     const newProdudt = {
       ...product,
@@ -58,7 +66,14 @@ function ProductPage() {
       </div>
 
       <ProductSearch search={search} setSearch={setSearch} />
-
+      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <option value="all">All</option>
+        <option value="skincare">Skincare</option>
+        <option value="lip">Lip</option>
+        <option value="eye">Eye</option>
+        <option value="face">Face</option>
+        <option value="hair">Hair</option>
+      </select>
       <ProductTable
         onEdit={handleEditClick}
         onDelete={handleDelete}
