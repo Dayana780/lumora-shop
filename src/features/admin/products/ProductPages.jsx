@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
-
-import products from "../../../data/products";
-
 import ProductSearch from "./ProductSearch";
 import AddProductButton from "./AddProductButton";
 import ProductTable from "./ProductTable";
 import AddProductModal from "./AddProductModal";
+import { useProducts } from "../../../context/ProductContext";
 
 function ProductPage() {
   const [search, setSearch] = useState("");
-  const [productList, setProductList] = useState(() => {
-    const savedProducts = localStorage.getItem("products");
-    return savedProducts ? JSON.parse(savedProducts) : products;
-  });
+  const { productList, addProduct, updateProduct, deleteProduct } =
+    useProducts();
   const [showModal, setShowModal] = useState(false);
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("default");
@@ -32,9 +28,7 @@ function ProductPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [search, category, sort, productsPerPage]);
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(productList));
-  }, [productList]);
+
   const sortedProducts = [...filteredProducts];
 
   if (sort === "price-low") {
@@ -57,40 +51,18 @@ function ProductPage() {
   const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-  function handleAddProduct(product) {
-    const newProdudt = {
-      ...product,
-      id: Date.now(),
-      price: Number(product.price),
-      stock: Number(product.stock),
-    };
-    setProductList((prev) => [...prev, newProdudt]);
-  }
+
   function handleEditClick(product) {
     setSelectedProduct(product);
     setShowModal(true);
   }
-
   function handleDelete(id) {
     const confrimDelete = window.confirm(
       "Are you sure about Delete this product?",
     );
     if (!confrimDelete) return;
-
-    setProductList((prev) => prev.filter((product) => product.id !== id));
+    deleteProduct(id);
   }
-  function handleUpdateProduct(updatedProduct) {
-    setProductList((prev) =>
-      prev.map((product) => {
-        if (product.id === updatedProduct.id) {
-          return updatedProduct;
-        }
-
-        return product;
-      }),
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -153,9 +125,9 @@ function ProductPage() {
       </button>
       {showModal && (
         <AddProductModal
-          updateProduct={handleUpdateProduct}
+          updateProduct={updateProduct}
           selectedProduct={selectedProduct}
-          addProduct={handleAddProduct}
+          addProduct={addProduct}
           onClose={() => {
             setShowModal(false);
             setSelectedProduct(null);

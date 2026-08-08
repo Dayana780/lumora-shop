@@ -23,69 +23,72 @@ import OrderTable from "./features/admin/orders/OrderTable";
 import UsersTable from "./features/admin/users/UserTable";
 import AdminRoute from "./components/common/AdminRoute";
 import ProductsPage from "./features/admin/products/ProductPages";
+import ProductProvider from "./context/ProductContext";
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <WishlistProvider>
-          <Suspense fallback={<Loading />}>
-            <Routes>
-              <Route element={<MainLayout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="shop" element={<Shop />} />
-                <Route path="product/:id" element={<ProductDetails />} />
-                <Route
-                  path="login"
-                  element={
-                    <GuestRoute>
-                      <Login />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="register"
-                  element={
-                    <GuestRoute>
-                      <Register />
-                    </GuestRoute>
-                  }
-                />
-                <Route
-                  path="wishlist"
-                  element={
-                    <ProtectedRoute>
-                      <Wishlist />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="cart"
-                  element={
-                    <ProtectedRoute>
-                      <Cart />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-              </Route>
-              <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<Dashboard />} />
-                  <Route path="products" element={<ProductsPage />} />
-                  <Route path="orders" element={<OrderTable />} />
-                  <Route path="users" element={<UsersTable />} />
+        <ProductProvider>
+          <WishlistProvider>
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="shop" element={<Shop />} />
+                  <Route path="product/:id" element={<ProductDetails />} />
+                  <Route
+                    path="login"
+                    element={
+                      <GuestRoute>
+                        <Login />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="register"
+                    element={
+                      <GuestRoute>
+                        <Register />
+                      </GuestRoute>
+                    }
+                  />
+                  <Route
+                    path="wishlist"
+                    element={
+                      <ProtectedRoute>
+                        <Wishlist />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="cart"
+                    element={
+                      <ProtectedRoute>
+                        <Cart />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
                 </Route>
-              </Route>
-            </Routes>
-          </Suspense>
-        </WishlistProvider>
+                <Route element={<AdminRoute />}>
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="products" element={<ProductsPage />} />
+                    <Route path="orders" element={<OrderTable />} />
+                    <Route path="users" element={<UsersTable />} />
+                  </Route>
+                </Route>
+              </Routes>
+            </Suspense>
+          </WishlistProvider>
+        </ProductProvider>
       </CartProvider>
     </AuthProvider>
   );
