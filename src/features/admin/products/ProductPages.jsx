@@ -9,7 +9,10 @@ import AddProductModal from "./AddProductModal";
 
 function ProductPage() {
   const [search, setSearch] = useState("");
-  const [productList, setProductList] = useState(products);
+  const [productList, setProductList] = useState(() => {
+    const savedProducts = localStorage.getItem("products");
+    return savedProducts ? JSON.parse(savedProducts) : products;
+  });
   const [showModal, setShowModal] = useState(false);
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("default");
@@ -29,6 +32,9 @@ function ProductPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [search, category, sort, productsPerPage]);
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(productList));
+  }, [productList]);
   const sortedProducts = [...filteredProducts];
 
   if (sort === "price-low") {
