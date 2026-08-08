@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import products from "../../../data/products";
 
@@ -14,6 +14,8 @@ function ProductPage() {
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("default");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage, setProductsPerPage] = useState(10);
   const searchProducts = productList.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase()),
   );
@@ -24,6 +26,9 @@ function ProductPage() {
       product.category.toLocaleLowerCase() === category.toLocaleLowerCase()
     );
   });
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category, sort, productsPerPage]);
   const sortedProducts = [...filteredProducts];
 
   if (sort === "price-low") {
@@ -41,6 +46,11 @@ function ProductPage() {
   if (sort === "stock") {
     sortedProducts.sort((a, b) => b.stock - a.stock);
   }
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
   function handleAddProduct(product) {
     const newProdudt = {
       ...product,
@@ -103,11 +113,38 @@ function ProductPage() {
 
         <option value="stock">Stock</option>
       </select>
+      <select
+        value={productsPerPage}
+        onChange={(e) => setProductsPerPage(Number(e.target.value))}
+      >
+        <option value={10}>10</option>
+        <option value={20}>20</option>
+        <option value={50}>50</option>
+      </select>
       <ProductTable
         onEdit={handleEditClick}
         onDelete={handleDelete}
-        products={sortedProducts}
+        products={paginatedProducts}
       />
+      <button
+        onClick={() => setCurrentPage((prev) => prev - 1)}
+        disabled={currentPage == 1}
+      >
+        Previes
+      </button>
+      <div className="flex gap-2">
+        {pages.map((page) => (
+          <button key={page} onClick={() => setCurrentPage(page)}>
+            {page}
+          </button>
+        ))}
+      </div>
+      <button
+        onClick={() => setCurrentPage((prev) => prev + 1)}
+        disabled={currentPage === totalPages}
+      >
+        Next
+      </button>
       {showModal && (
         <AddProductModal
           updateProduct={handleUpdateProduct}
