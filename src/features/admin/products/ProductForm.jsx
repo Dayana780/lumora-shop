@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 
 const initialForm = {
-  name: "",
+  title: "",
   price: "",
-  category: "",
+  category_id: "",
   stock: "",
-  image: "",
   description: "",
 };
 
 function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
   const [formData, setFormData] = useState(initialForm);
-  const [preview, setPreview] = useState("");
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -22,63 +20,55 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
     }));
   }
 
-  function handleImageChange(e) {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    setFormData((prev) => ({
-      ...prev,
-      image: file,
-    }));
-
-    setPreview(URL.createObjectURL(file));
-  }
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const hasEmptyField = Object.entries(formData).some(([key, value]) => {
-      if (key === "image") return false;
-
-      return typeof value === "string" && value.trim() === "";
-    });
+    const hasEmptyField = Object.values(formData).some(
+      (value) => String(value).trim() === "",
+    );
 
     if (hasEmptyField) {
       alert("Please fill all fields");
       return;
     }
 
-    if (selectedProduct) {
-      updateProduct({
-        ...formData,
-        id: selectedProduct.id,
-      });
-    } else {
-      addProduct(formData);
-    }
+    try {
+      if (selectedProduct) {
+        await updateProduct({
+          ...formData,
+          id: selectedProduct.id,
+        });
+      } else {
+        await addProduct(formData);
+      }
 
-    setFormData(initialForm);
-    setPreview("");
-    onClose();
+      setFormData(initialForm);
+      onClose();
+    } catch (error) {
+      console.error("Product save failed:", error);
+    }
   }
 
   useEffect(() => {
     if (selectedProduct) {
-      setFormData(selectedProduct);
-      setPreview(selectedProduct.image);
+      setFormData({
+        title: selectedProduct.title ?? "",
+        price: selectedProduct.price ?? "",
+        category_id: selectedProduct.category_id ?? "",
+        stock: selectedProduct.stock ?? "",
+        description: selectedProduct.description ?? "",
+      });
     } else {
       setFormData(initialForm);
-      setPreview("");
     }
   }, [selectedProduct]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <input
-        name="name"
+        name="title"
         placeholder="Product Name"
-        value={formData.name}
+        value={formData.title}
         onChange={handleChange}
         className="w-full border rounded p-2"
       />
@@ -93,9 +83,9 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
       />
 
       <input
-        name="category"
-        placeholder="Category"
-        value={formData.category}
+        name="category_id"
+        placeholder="Category ID"
+        value={formData.category_id}
         onChange={handleChange}
         className="w-full border rounded p-2"
       />
@@ -109,13 +99,6 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         className="w-full border rounded p-2"
       />
 
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        className="w-full border rounded p-2"
-      />
-
       <textarea
         name="description"
         placeholder="Description"
@@ -123,14 +106,6 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         onChange={handleChange}
         className="w-full border rounded p-2"
       />
-
-      {preview && (
-        <img
-          src={preview}
-          alt="Preview"
-          className="w-40 h-40 object-cover rounded border"
-        />
-      )}
 
       <button
         type="submit"

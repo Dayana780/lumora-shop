@@ -1,11 +1,11 @@
 function ProductRow({ product, onDelete, onEdit }) {
   return (
     <tr className="border-t">
-      <td>{product.name}</td>
+      <td>{product.title}</td>
 
       <td>${product.price}</td>
 
-      <td>{product.category}</td>
+      <td>{product.slug}</td>
 
       <td>{product.stock}</td>
 

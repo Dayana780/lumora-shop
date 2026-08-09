@@ -16,18 +16,19 @@ function ProductPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage, setProductsPerPage] = useState(10);
   const searchProducts = productList.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase()),
+    product.title.toLowerCase().includes(search.toLowerCase()),
   );
   const filteredProducts = searchProducts.filter((product) => {
     if (category === "all") return true;
 
     return (
-      product.category.toLocaleLowerCase() === category.toLocaleLowerCase()
+      product.categories?.slug?.toLocaleLowerCase() ===
+      category.toLocaleLowerCase()
     );
   });
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, category, sort, productsPerPage]);
+  }, [search, category, productsPerPage]);
 
   const sortedProducts = [...filteredProducts];
 
@@ -40,7 +41,7 @@ function ProductPage() {
   }
 
   if (sort === "name") {
-    sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+    sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
   }
 
   if (sort === "stock") {
@@ -49,6 +50,8 @@ function ProductPage() {
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
   const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+  const startProduct = sortedProducts.length === 0 ? 0 : startIndex + 1;
+  const endProduct = Math.min(endIndex, sortedProducts.length);
   const totalPages = Math.ceil(sortedProducts.length / productsPerPage);
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
@@ -99,11 +102,24 @@ function ProductPage() {
         <option value={20}>20</option>
         <option value={50}>50</option>
       </select>
-      <ProductTable
-        onEdit={handleEditClick}
-        onDelete={handleDelete}
-        products={paginatedProducts}
-      />
+      <p>
+        showing {startProduct}-{endProduct}of{""}
+        {sortedProducts.length} products
+      </p>
+
+      {sortedProducts.length === 0 ? (
+        <div className="text-center py-10">
+          <p className="text-lg font-semibold">No products found</p>
+
+          <p className="text-gray-500">Try changing your search or filter.</p>
+        </div>
+      ) : (
+        <ProductTable
+          onEdit={handleEditClick}
+          onDelete={handleDelete}
+          products={paginatedProducts}
+        />
+      )}
       <button
         onClick={() => setCurrentPage((prev) => prev - 1)}
         disabled={currentPage == 1}
