@@ -33,10 +33,21 @@ function Register() {
         email: formData.email,
         password: formData.password,
       });
+
       if (error) {
         throw error;
       }
-      console.log("rigester date", data);
+      if (data.user) {
+        const { error } = await supabase.from("profiles").insert({
+          full_name: formData.name,
+          id: data.user.id,
+          role: "customer",
+        });
+      }
+      if (error) {
+        throw error;
+      }
+
       setSuccess("horaaaaa");
       setFormData({
         name: "",
@@ -44,7 +55,6 @@ function Register() {
         password: "",
       });
     } catch (error) {
-      console.log("error", error);
       setError(error.message);
     } finally {
       setLoading(false);
