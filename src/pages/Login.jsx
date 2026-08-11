@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 function Login() {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -18,19 +18,18 @@ function Login() {
     }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
     setError("");
     setSuccess("");
 
-    if (!formData.name) {
-      setError("Name is required");
-      return;
-    }
-
     if (!formData.email) {
       setError("Email is required");
+      return;
+    }
+    if (!formData.password) {
+      setError("Password is required");
       return;
     }
 
@@ -41,34 +40,25 @@ function Login() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      console.log(formData);
-
-      setLoading(false);
-
-      setSuccess("Login successful!");
-
-      setFormData({
-        name: "",
-        email: "",
-        password: "",
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
       });
-    }, 2000);
+      if (error) {
+        throw error;
+      }
+      setSuccess("afariiiiiiin");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="bg-amber-700 p-5">
       <form onSubmit={handleSubmit}>
-
-        <input
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleDataChange}
-        />
-
-        <br /><br />
-
         <input
           name="email"
           placeholder="Email"
@@ -76,7 +66,8 @@ function Login() {
           onChange={handleDataChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         <input
           type="password"
@@ -86,7 +77,8 @@ function Login() {
           onChange={handleDataChange}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -95,15 +87,12 @@ function Login() {
         <button type="submit" disabled={loading}>
           {loading ? "Loading..." : "Submit"}
         </button>
-
       </form>
       <h3>Preview</h3>
 
-<p>Name: {formData.name}</p>
+      <p>Email: {formData.email}</p>
 
-<p>Email: {formData.email}</p>
-
-<p>Password Length: {formData.password.length}</p>
+      <p>Password Length: {formData.password.length}</p>
     </div>
   );
 }
