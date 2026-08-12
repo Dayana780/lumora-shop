@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { supabase } from "../../../lib/supabase.js";
 const initialForm = {
   title: "",
   price: "",
@@ -11,43 +11,43 @@ const initialForm = {
 function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
   const [formData, setFormData] = useState(initialForm);
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  // =========================================
+  // GET CATEGORIES
+  // =========================================
 
-    const hasEmptyField = Object.values(formData).some(
-      (value) => String(value).trim() === "",
-    );
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const { data, error } = await supabase
+          .from("categories")
+          .select("id, name, slug")
+          .order("name");
 
-    if (hasEmptyField) {
-      alert("Please fill all fields");
-      return;
-    }
+        if (error) {
+          throw error;
+        }
 
-    try {
-      if (selectedProduct) {
-        await updateProduct({
-          ...formData,
-          id: selectedProduct.id,
-        });
-      } else {
-        await addProduct(formData);
+        setCategories(data ?? []);
+      } catch (error) {
+        console.error("Fetch categories error:", error);
+        setError(error.message);
+      } finally {
+        setLoadingCategories(false);
       }
-
-      setFormData(initialForm);
-      onClose();
-    } catch (error) {
-      console.error("Product save failed:", error);
     }
-  }
+
+    fetchCategories();
+  }, []);
+
+  // =========================================
+  // EDIT PRODUCT
+  // =========================================
 
   useEffect(() => {
     if (selectedProduct) {
@@ -63,8 +63,92 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
     }
   }, [selectedProduct]);
 
+  // =========================================
+  // HANDLE CHANGE
+  // =========================================
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  // =========================================
+  // SUBMIT
+  // =========================================
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    setError("");
+
+    if (!formData.title.trim()) {
+      setError("Product title is required.");
+      return;
+    }
+
+    if (!formData.price) {
+      setError("Price is required.");
+      return;
+    }
+
+    if (!formData.category_id) {
+      setError("Please select a category.");
+      return;
+    }
+
+    if (!formData.stock) {
+      setError("Stock is required.");
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      setError("Description is required.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const productData = {
+        title: formData.title.trim(),
+        price: Number(formData.price),
+        category_id: formData.category_id,
+        stock: Number(formData.stock),
+        description: formData.description.trim(),
+      };
+
+      if (selectedProduct) {
+        await updateProduct({
+          ...productData,
+          id: selectedProduct.id,
+        });
+      } else {
+        await addProduct(productData);
+      }
+
+      setFormData(initialForm);
+
+      onClose();
+    } catch (error) {
+      console.error("Product save failed:", error);
+      setError(error.message || "Failed to save product.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // =========================================
+  // UI
+  // =========================================
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* TITLE */}
+
       <input
         name="title"
         placeholder="Product Name"
@@ -73,31 +157,51 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         className="w-full border rounded p-2"
       />
 
+      {/* PRICE */}
+
       <input
         name="price"
         type="number"
+        min="0"
         placeholder="Price"
         value={formData.price}
         onChange={handleChange}
         className="w-full border rounded p-2"
       />
 
-      <input
+      {/* CATEGORY */}
+
+      <select
         name="category_id"
-        placeholder="Category ID"
         value={formData.category_id}
         onChange={handleChange}
+        disabled={loadingCategories}
         className="w-full border rounded p-2"
-      />
+      >
+        <option value="">
+          {loadingCategories ? "Loading categories..." : "Select category"}
+        </option>
+
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+
+      {/* STOCK */}
 
       <input
         name="stock"
         type="number"
+        min="0"
         placeholder="Stock"
         value={formData.stock}
         onChange={handleChange}
         className="w-full border rounded p-2"
       />
+
+      {/* DESCRIPTION */}
 
       <textarea
         name="description"
@@ -107,11 +211,22 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         className="w-full border rounded p-2"
       />
 
+      {/* ERROR */}
+
+      {error && <p className="text-red-500">{error}</p>}
+
+      {/* BUTTON */}
+
       <button
         type="submit"
-        className="w-full bg-pink-500 text-white rounded py-2"
+        disabled={loading || loadingCategories}
+        className="w-full bg-pink-500 text-white rounded py-2 disabled:opacity-50"
       >
-        {selectedProduct ? "Update Product" : "Save Product"}
+        {loading
+          ? "Saving..."
+          : selectedProduct
+            ? "Update Product"
+            : "Save Product"}
       </button>
     </form>
   );
