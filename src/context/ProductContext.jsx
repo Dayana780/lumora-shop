@@ -106,6 +106,7 @@ function ProductProvider({ children }) {
     try {
       const productData = {
         title: updatedProduct.title,
+        slug: createSlug(updatedProduct.title),
         description: updatedProduct.description,
         price: Number(updatedProduct.price),
         stock: Number(updatedProduct.stock),
