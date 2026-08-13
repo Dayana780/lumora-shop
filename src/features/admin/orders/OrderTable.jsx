@@ -1,5 +1,4 @@
 function OrderTable({ orders }) {
-  console.log("ORDERS:", orders);
   return (
     <table className="w-full border">
       <thead>
