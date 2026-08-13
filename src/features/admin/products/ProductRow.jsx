@@ -5,7 +5,7 @@ function ProductRow({ product, onDelete, onEdit }) {
 
       <td>${product.price}</td>
 
-      <td>{product.slug}</td>
+      <td>{product.categories?.name || "—"}</td>
 
       <td>{product.stock}</td>
 

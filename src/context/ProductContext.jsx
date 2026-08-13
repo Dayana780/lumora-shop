@@ -58,9 +58,33 @@ function ProductProvider({ children }) {
     setError(null);
 
     try {
+      const baseSlug = createSlug(product.title);
+
+      let slug = baseSlug;
+      let counter = 1;
+
+      while (true) {
+        const { data: existingProduct, error: checkError } = await supabase
+          .from("products")
+          .select("id")
+          .eq("slug", slug)
+          .maybeSingle();
+
+        if (checkError) {
+          throw checkError;
+        }
+
+        if (!existingProduct) {
+          break;
+        }
+
+        counter++;
+        slug = `${baseSlug}-${counter}`;
+      }
+
       const productData = {
         title: product.title,
-        slug: createSlug(product.title),
+        slug,
         description: product.description,
         price: Number(product.price),
         stock: Number(product.stock),
@@ -92,7 +116,6 @@ function ProductProvider({ children }) {
     } catch (error) {
       console.error("Add product error:", error);
       setError(error.message);
-
       throw error;
     }
   }
@@ -104,9 +127,33 @@ function ProductProvider({ children }) {
     setError(null);
 
     try {
+      const baseSlug = createSlug(updatedProduct.title);
+      let slug = baseSlug;
+      let counter = 1;
+
+      while (true) {
+        const { data: existingProduct, error: checkError } = await supabase
+          .from("products")
+          .select("id")
+          .eq("slug", slug)
+          .neq("id", updatedProduct.id)
+          .maybeSingle();
+
+        if (checkError) {
+          throw checkError;
+        }
+
+        if (!existingProduct) {
+          break;
+        }
+
+        counter++;
+        slug = `${baseSlug}-${counter}`;
+      }
+
       const productData = {
         title: updatedProduct.title,
-        slug: createSlug(updatedProduct.title),
+        slug,
         description: updatedProduct.description,
         price: Number(updatedProduct.price),
         stock: Number(updatedProduct.stock),
@@ -119,13 +166,13 @@ function ProductProvider({ children }) {
         .eq("id", updatedProduct.id)
         .select(
           `
-          *,
-          categories (
-            id,
-            name,
-            slug
-          )
-        `,
+        *,
+        categories (
+          id,
+          name,
+          slug
+        )
+      `,
         )
         .single();
 
@@ -143,7 +190,6 @@ function ProductProvider({ children }) {
     } catch (error) {
       console.error("Update product error:", error);
       setError(error.message);
-
       throw error;
     }
   }

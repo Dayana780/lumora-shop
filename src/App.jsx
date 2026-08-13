@@ -19,76 +19,79 @@ import ProtectedRoute from "./components/common/ProtectedRoute";
 import GuestRoute from "./components/common/GuestRoute";
 import Loading from "./components/ui/Loading";
 import AdminLayout from "./layouts/AdminLayout";
-import OrderTable from "./features/admin/orders/OrderTable";
 import UsersTable from "./features/admin/users/UserTable";
 import AdminRoute from "./components/common/AdminRoute";
 import ProductsPage from "./features/admin/products/ProductPages";
 import ProductProvider from "./context/ProductContext";
+import OrderProvider from "./context/OrderContext";
+import OrderPage from "./features/admin/orders/OrderPage";
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
         <ProductProvider>
-          <WishlistProvider>
-            <Suspense fallback={<Loading />}>
-              <Routes>
-                <Route element={<MainLayout />}>
-                  <Route path="/" element={<Home />} />
-                  <Route path="shop" element={<Shop />} />
-                  <Route path="product/:id" element={<ProductDetails />} />
-                  <Route
-                    path="login"
-                    element={
-                      <GuestRoute>
-                        <Login />
-                      </GuestRoute>
-                    }
-                  />
-                  <Route
-                    path="register"
-                    element={
-                      <GuestRoute>
-                        <Register />
-                      </GuestRoute>
-                    }
-                  />
-                  <Route
-                    path="wishlist"
-                    element={
-                      <ProtectedRoute>
-                        <Wishlist />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="cart"
-                    element={
-                      <ProtectedRoute>
-                        <Cart />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="profile"
-                    element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Route>
-
-                <Route element={<AdminRoute />}>
-                  <Route path="/admin" element={<AdminLayout />}>
-                    <Route index element={<Dashboard />} />
-                    <Route path="products" element={<ProductsPage />} />
-                    <Route path="orders" element={<OrderTable />} />
-                    <Route path="users" element={<UsersTable />} />
+          <OrderProvider>
+            <WishlistProvider>
+              <Suspense fallback={<Loading />}>
+                <Routes>
+                  <Route element={<MainLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="shop" element={<Shop />} />
+                    <Route path="product/:id" element={<ProductDetails />} />
+                    <Route
+                      path="login"
+                      element={
+                        <GuestRoute>
+                          <Login />
+                        </GuestRoute>
+                      }
+                    />
+                    <Route
+                      path="register"
+                      element={
+                        <GuestRoute>
+                          <Register />
+                        </GuestRoute>
+                      }
+                    />
+                    <Route
+                      path="wishlist"
+                      element={
+                        <ProtectedRoute>
+                          <Wishlist />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="cart"
+                      element={
+                        <ProtectedRoute>
+                          <Cart />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="profile"
+                      element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      }
+                    />
                   </Route>
-                </Route>
-              </Routes>
-            </Suspense>
-          </WishlistProvider>
+
+                  <Route element={<AdminRoute />}>
+                    <Route path="/admin" element={<AdminLayout />}>
+                      <Route index element={<Dashboard />} />
+                      <Route path="products" element={<ProductsPage />} />
+                      <Route path="orders" element={<OrderPage />} />
+                      <Route path="users" element={<UsersTable />} />
+                    </Route>
+                  </Route>
+                </Routes>
+              </Suspense>
+            </WishlistProvider>
+          </OrderProvider>
         </ProductProvider>
       </CartProvider>
     </AuthProvider>
