@@ -1,22 +1,43 @@
 import { useState } from "react";
-import { useOrders } from "../../../context/OrderContext";
+import { useQuery } from "@tanstack/react-query";
 import OrderTable from "./OrderTable";
+import { supabase } from "../../../lib/supabase";
 
 function OrderPage() {
-  const { orderList, loading, error } = useOrders();
-
   const [statusFilter, setStatusFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");
 
-  if (loading) {
+  async function getOrders() {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return data ?? [];
+  }
+
+  const {
+    data: orders = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["orders"],
+    queryFn: getOrders,
+  });
+
+  if (isLoading) {
     return <p>Loading orders...</p>;
   }
 
   if (error) {
-    return <p>Error: {error}</p>;
+    return <p>Error: {error.message}</p>;
   }
 
-  if (orderList.length === 0) {
+  if (orders.length === 0) {
     return (
       <div className="text-center py-10">
         <p className="text-lg font-semibold">No orders found</p>
@@ -25,7 +46,7 @@ function OrderPage() {
     );
   }
 
-  const statusFilterOrder = orderList.filter((order) => {
+  const statusFilterOrder = orders.filter((order) => {
     if (statusFilter === "all") {
       return true;
     }
