@@ -74,6 +74,35 @@ function OrderProvider({ children }) {
   }
 
   // =========================================
+  // updateOrderPaymentStatus
+  // =========================================
+  async function updateOrderPaymentStatus(id, newPaymentStatus) {
+    setError(null);
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({
+          payment_status: newPaymentStatus,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      setOrderList((prev) =>
+        prev.map((order) => (order.id === id ? data : order)),
+      );
+
+      if (error) {
+        throw error;
+      }
+      console.log("data", data);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+  // =========================================
   // PROVIDER
   // =========================================
 
@@ -84,6 +113,7 @@ function OrderProvider({ children }) {
         loading,
         error,
         updateOrderStatus,
+        updateOrderPaymentStatus,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 import { useOrders } from "../../../context/OrderContext";
 
 function OrderTable({ orders }) {
-  const { updateOrderStatus } = useOrders();
+  const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
 
   async function handleStatusChange(id, newStatus) {
     try {
@@ -12,7 +12,14 @@ function OrderTable({ orders }) {
       console.error("Failed to update order status:", error);
     }
   }
-
+  async function handlePaymentStatusChange(id, newPaymentStatus) {
+    try {
+      const data = await updateOrderPaymentStatus(id, newPaymentStatus);
+      console.log("Updated payorder:", data);
+    } catch (error) {
+      console.error("Failed to update payorder status:", error);
+    }
+  }
   return (
     <table className="w-full border">
       <thead>
@@ -47,8 +54,18 @@ function OrderTable({ orders }) {
                 <option value="cancelled">Cancelled</option>
               </select>
             </td>
-
-            <td>{order.payment_status}</td>
+            <td>
+              <select
+                value={order.payment_status}
+                onChange={(e) =>
+                  handlePaymentStatusChange(order.id, e.target.value)
+                }
+              >
+                <option value="pending">Pending</option>
+                <option value="paid">paid</option>
+                <option value="failed">failed</option>
+              </select>
+            </td>
 
             <td>{new Date(order.created_at).toLocaleString()}</td>
           </tr>
