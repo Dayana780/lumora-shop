@@ -8,6 +8,10 @@ function OrderProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // =========================================
+  // FETCH ORDERS
+  // =========================================
+
   useEffect(() => {
     async function fetchOrderData() {
       setLoading(true);
@@ -35,12 +39,51 @@ function OrderProvider({ children }) {
     fetchOrderData();
   }, []);
 
+  // =========================================
+  // UPDATE ORDER STATUS
+  // =========================================
+
+  async function updateOrderStatus(id, newStatus) {
+    setError(null);
+
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({
+          status: newStatus,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      setOrderList((prev) =>
+        prev.map((order) => (order.id === id ? data : order)),
+      );
+
+      return data;
+    } catch (error) {
+      console.error("Update order status error:", error);
+      setError(error.message);
+
+      throw error;
+    }
+  }
+
+  // =========================================
+  // PROVIDER
+  // =========================================
+
   return (
     <OrderContext.Provider
       value={{
         orderList,
         loading,
         error,
+        updateOrderStatus,
       }}
     >
       {children}
