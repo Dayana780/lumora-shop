@@ -1,16 +1,21 @@
 import { useMutation } from "@tanstack/react-query";
 import { useOrders } from "../../../context/OrderContext";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 function OrderTable({ orders }) {
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
   const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
+  const [updatingPaymentOrderId, setUpdatingPaymentOrderId] = useState(null);
   const queryClient = useQueryClient();
   function handleStatusChange(id, newStatus) {
+    setUpdatingOrderId(id);
     mutationStatus.mutate({
       id,
       newStatus,
     });
   }
   function handlePaymentStatusChange(id, newPaymentStatus) {
+    setUpdatingPaymentOrderId(id);
     mutationPayment.mutate({
       id,
       newPaymentStatus,
@@ -29,6 +34,9 @@ function OrderTable({ orders }) {
     onError: (error) => {
       console.error("Failed to update order:", error);
     },
+    onSettled: () => {
+      setUpdatingOrderId(null);
+    },
   });
   const mutationPayment = useMutation({
     mutationFn: ({ id, newPaymentStatus }) => {
@@ -41,6 +49,9 @@ function OrderTable({ orders }) {
     },
     onError: (error) => {
       console.log("faild", error);
+    },
+    onSettled: () => {
+      setUpdatingPaymentOrderId(null);
     },
   });
   return (
@@ -67,7 +78,9 @@ function OrderTable({ orders }) {
 
             <td>
               <select
-                disabled={mutationStatus.isPending}
+                disabled={
+                  mutationStatus.isPending && updatingOrderId === order.id
+                }
                 value={order.status}
                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
               >
@@ -80,7 +93,10 @@ function OrderTable({ orders }) {
             </td>
             <td>
               <select
-                disabled={mutationPayment.isPending}
+                disabled={
+                  mutationPayment.isPending &&
+                  updatingPaymentOrderId === order.id
+                }
                 value={order.payment_status}
                 onChange={(e) =>
                   handlePaymentStatusChange(order.id, e.target.value)
