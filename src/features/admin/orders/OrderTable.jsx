@@ -1,7 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useOrders } from "../../../context/OrderContext";
+import { useQueryClient } from "@tanstack/react-query";
 function OrderTable({ orders }) {
   const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
+  const queryClient = useQueryClient();
   function handleStatusChange(id, newStatus) {
     mutation.mutate({
       id,
@@ -19,6 +21,14 @@ function OrderTable({ orders }) {
   const mutation = useMutation({
     mutationFn: ({ id, newStatus }) => {
       return updateOrderStatus(id, newStatus);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["orders"],
+      });
+    },
+    onError: (error) => {
+      console.error("Failed to update order:", error);
     },
   });
   return (
