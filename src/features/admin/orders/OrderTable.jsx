@@ -1,16 +1,12 @@
+import { useMutation } from "@tanstack/react-query";
 import { useOrders } from "../../../context/OrderContext";
-
 function OrderTable({ orders }) {
   const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
-
-  async function handleStatusChange(id, newStatus) {
-    try {
-      const data = await updateOrderStatus(id, newStatus);
-
-      console.log("Updated order:", data);
-    } catch (error) {
-      console.error("Failed to update order status:", error);
-    }
+  function handleStatusChange(id, newStatus) {
+    mutation.mutate({
+      id,
+      newStatus,
+    });
   }
   async function handlePaymentStatusChange(id, newPaymentStatus) {
     try {
@@ -20,6 +16,11 @@ function OrderTable({ orders }) {
       console.error("Failed to update payorder status:", error);
     }
   }
+  const mutation = useMutation({
+    mutationFn: ({ id, newStatus }) => {
+      return updateOrderStatus(id, newStatus);
+    },
+  });
   return (
     <table className="w-full border">
       <thead>
