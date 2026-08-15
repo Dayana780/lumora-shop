@@ -55,6 +55,7 @@ function OrderTable({ orders }) {
 
             <td>
               <select
+                disabled={mutation.isPending}
                 value={order.status}
                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
               >
