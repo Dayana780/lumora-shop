@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import OrderTable from "./OrderTable";
 import { supabase } from "../../../lib/supabase";
-
+import { Outlet } from "react-router-dom";
 function OrderPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [paymentFilter, setPaymentFilter] = useState("all");

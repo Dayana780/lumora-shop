@@ -2,58 +2,79 @@ import { useMutation } from "@tanstack/react-query";
 import { useOrders } from "../../../context/OrderContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 function OrderTable({ orders }) {
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
-  const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
   const [updatingPaymentOrderId, setUpdatingPaymentOrderId] = useState(null);
+
+  const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
+
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
   function handleStatusChange(id, newStatus) {
     setUpdatingOrderId(id);
+
     mutationStatus.mutate({
       id,
       newStatus,
     });
   }
+
   function handlePaymentStatusChange(id, newPaymentStatus) {
     setUpdatingPaymentOrderId(id);
+
     mutationPayment.mutate({
       id,
       newPaymentStatus,
     });
   }
 
+  function handleViewDetails(id) {
+    navigate(`/admin/orders/${id}`);
+  }
+
   const mutationStatus = useMutation({
     mutationFn: ({ id, newStatus }) => {
       return updateOrderStatus(id, newStatus);
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["orders"],
       });
     },
+
     onError: (error) => {
       console.error("Failed to update order:", error);
     },
+
     onSettled: () => {
       setUpdatingOrderId(null);
     },
   });
+
   const mutationPayment = useMutation({
     mutationFn: ({ id, newPaymentStatus }) => {
       return updateOrderPaymentStatus(id, newPaymentStatus);
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["orders"],
       });
     },
+
     onError: (error) => {
-      console.log("faild", error);
+      console.error("Failed to update payment status:", error);
     },
+
     onSettled: () => {
       setUpdatingPaymentOrderId(null);
     },
   });
+
   return (
     <table className="w-full border">
       <thead>
@@ -64,6 +85,7 @@ function OrderTable({ orders }) {
           <th>Status</th>
           <th>Payment Status</th>
           <th>Created At</th>
+          <th>Action</th>
         </tr>
       </thead>
 
@@ -91,6 +113,7 @@ function OrderTable({ orders }) {
                 <option value="cancelled">Cancelled</option>
               </select>
             </td>
+
             <td>
               <select
                 disabled={
@@ -103,12 +126,18 @@ function OrderTable({ orders }) {
                 }
               >
                 <option value="pending">Pending</option>
-                <option value="paid">paid</option>
-                <option value="failed">failed</option>
+                <option value="paid">Paid</option>
+                <option value="failed">Failed</option>
               </select>
             </td>
 
             <td>{new Date(order.created_at).toLocaleString()}</td>
+
+            <td>
+              <button onClick={() => handleViewDetails(order.id)}>
+                View Details
+              </button>
+            </td>
           </tr>
         ))}
       </tbody>

@@ -25,6 +25,7 @@ import ProductsPage from "./features/admin/products/ProductPages";
 import ProductProvider from "./context/ProductContext";
 import OrderProvider from "./context/OrderContext";
 import OrderPage from "./features/admin/orders/OrderPage";
+import OrderDetails from "./features/admin/orders/OrderDetails";
 function App() {
   return (
     <AuthProvider>
@@ -85,6 +86,7 @@ function App() {
                       <Route index element={<Dashboard />} />
                       <Route path="products" element={<ProductsPage />} />
                       <Route path="orders" element={<OrderPage />} />
+                      <Route path="orders/:id" element={<OrderDetails />} />
                       <Route path="users" element={<UsersTable />} />
                     </Route>
                   </Route>
