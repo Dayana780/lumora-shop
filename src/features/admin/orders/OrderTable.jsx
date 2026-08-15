@@ -5,20 +5,19 @@ function OrderTable({ orders }) {
   const { updateOrderStatus, updateOrderPaymentStatus } = useOrders();
   const queryClient = useQueryClient();
   function handleStatusChange(id, newStatus) {
-    mutation.mutate({
+    mutationStatus.mutate({
       id,
       newStatus,
     });
   }
-  async function handlePaymentStatusChange(id, newPaymentStatus) {
-    try {
-      const data = await updateOrderPaymentStatus(id, newPaymentStatus);
-      console.log("Updated payorder:", data);
-    } catch (error) {
-      console.error("Failed to update payorder status:", error);
-    }
+  function handlePaymentStatusChange(id, newPaymentStatus) {
+    mutationPayment.mutate({
+      id,
+      newPaymentStatus,
+    });
   }
-  const mutation = useMutation({
+
+  const mutationStatus = useMutation({
     mutationFn: ({ id, newStatus }) => {
       return updateOrderStatus(id, newStatus);
     },
@@ -29,6 +28,19 @@ function OrderTable({ orders }) {
     },
     onError: (error) => {
       console.error("Failed to update order:", error);
+    },
+  });
+  const mutationPayment = useMutation({
+    mutationFn: ({ id, newPaymentStatus }) => {
+      return updateOrderPaymentStatus(id, newPaymentStatus);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["orders"],
+      });
+    },
+    onError: (error) => {
+      console.log("faild", error);
     },
   });
   return (
@@ -55,7 +67,7 @@ function OrderTable({ orders }) {
 
             <td>
               <select
-                disabled={mutation.isPending}
+                disabled={mutationStatus.isPending}
                 value={order.status}
                 onChange={(e) => handleStatusChange(order.id, e.target.value)}
               >
@@ -68,6 +80,7 @@ function OrderTable({ orders }) {
             </td>
             <td>
               <select
+                disabled={mutationPayment.isPending}
                 value={order.payment_status}
                 onChange={(e) =>
                   handlePaymentStatusChange(order.id, e.target.value)
