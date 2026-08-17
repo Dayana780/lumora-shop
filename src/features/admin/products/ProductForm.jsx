@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../lib/supabase.js";
+
 const initialForm = {
   title: "",
   price: "",
@@ -13,6 +14,9 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
 
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -58,13 +62,18 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         stock: selectedProduct.stock ?? "",
         description: selectedProduct.description ?? "",
       });
+
+      setImageFile(null);
+      setImagePreview("");
     } else {
       setFormData(initialForm);
+      setImageFile(null);
+      setImagePreview("");
     }
   }, [selectedProduct]);
 
   // =========================================
-  // HANDLE CHANGE
+  // HANDLE INPUT CHANGE
   // =========================================
 
   function handleChange(e) {
@@ -74,6 +83,38 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
       ...prev,
       [name]: value,
     }));
+  }
+
+  // =========================================
+  // HANDLE IMAGE CHANGE
+  // =========================================
+
+  function handleImageChange(e) {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      setImageFile(null);
+      setImagePreview("");
+      return;
+    }
+
+    // فقط عکس
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file.");
+      return;
+    }
+
+    // حداکثر 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size must be less than 5MB.");
+      return;
+    }
+
+    setError("");
+    setImageFile(file);
+
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
   }
 
   // =========================================
@@ -119,6 +160,9 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         category_id: formData.category_id,
         stock: Number(formData.stock),
         description: formData.description.trim(),
+
+        // عکس را هم همراه محصول می‌فرستیم
+        imageFile,
       };
 
       if (selectedProduct) {
@@ -131,6 +175,8 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
       }
 
       setFormData(initialForm);
+      setImageFile(null);
+      setImagePreview("");
 
       onClose();
     } catch (error) {
@@ -210,6 +256,29 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
         onChange={handleChange}
         className="w-full border rounded p-2"
       />
+
+      {/* IMAGE */}
+
+      <div>
+        <label className="block mb-2 font-medium">Product Image</label>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="w-full border rounded p-2"
+        />
+
+        {imagePreview && (
+          <div className="mt-4">
+            <img
+              src={imagePreview}
+              alt="Product preview"
+              className="h-40 w-40 rounded-lg object-cover border"
+            />
+          </div>
+        )}
+      </div>
 
       {/* ERROR */}
 
