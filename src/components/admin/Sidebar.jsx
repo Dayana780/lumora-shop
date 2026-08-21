@@ -1,19 +1,28 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import adminMenu from "../../config/adminMenu";
+import { useAuth } from "../../context/AuthContext";
 
 function Sidebar() {
-  return (
-    <aside className="w-64 min-h-screen bg-white border-r p-5 flex flex-col">
-      {/* Logo */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-pink-600">Lumora</h1>
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-        <p className="text-sm text-gray-500">Admin Panel</p>
+  async function handleLogout() {
+    await logout();
+    navigate("/login");
+  }
+
+  return (
+    <aside className="fixed left-0 top-0 z-50 h-screen w-64 overflow-y-auto bg-white border-r border-gray-200 flex w-full flex-col border-b  p-4 md:min-h-screen md:w-64 md:border-r md:border-b-0 md:p-5">
+      <div className="mb-8 px-2">
+        <h1 className="font-display text-2xl font-semibold text-charcoal">
+          Lumora
+        </h1>
+        <p className="text-sm text-stone-500">Admin Panel</p>
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1">
-        <ul className="space-y-2">
+      <nav className="flex-1 overflow-x-auto">
+        <ul className="flex min-w-max gap-1 md:block md:space-y-1">
           {adminMenu.map((item) => {
             const Icon = item.icon;
 
@@ -21,13 +30,16 @@ function Sidebar() {
               <li key={item.path}>
                 <NavLink
                   to={item.path}
+                  end={item.path === "/admin"}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 
-                    ${isActive ? "bg-pink-100 text-pink-600" : "text-gray-600 hover:bg-gray-100"}`
+                    `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors duration-200 ${
+                      isActive
+                        ? "bg-blush-100 text-rose-600"
+                        : "text-stone-500 hover:bg-stone-100 hover:text-charcoal"
+                    }`
                   }
                 >
-                  <Icon size={20} />
-
+                  <Icon size={18} />
                   <span>{item.title}</span>
                 </NavLink>
               </li>
@@ -36,8 +48,11 @@ function Sidebar() {
         </ul>
       </nav>
 
-      {/* Logout */}
-      <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-500 transition">
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-stone-500 transition-colors hover:bg-rose-50 hover:text-rose-600"
+      >
+        <LogOut size={18} />
         Logout
       </button>
     </aside>

@@ -1,9 +1,9 @@
 function Loading() {
-    return (
-        <h5>
-            Loading...
-        </h5>
-    )
+  return (
+    <div className="flex items-center justify-center py-16">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-rose-400" />
+    </div>
+  );
 }
 
-export default Loading
+export default Loading;

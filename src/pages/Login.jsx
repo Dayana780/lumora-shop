@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -48,7 +49,7 @@ function Login() {
       if (error) {
         throw error;
       }
-      setSuccess("afariiiiiiin");
+      setSuccess("Logged in successfully.");
     } catch (error) {
       setError(error.message);
     } finally {
@@ -57,42 +58,60 @@ function Login() {
   }
 
   return (
-    <div className="bg-amber-700 p-5">
-      <form onSubmit={handleSubmit}>
-        <input
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleDataChange}
-        />
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-blush-50/40 px-4 py-12">
+      <div className="card-surface w-full max-w-md p-8">
+        <div className="text-center">
+          <p className="font-display text-2xl font-semibold">Lumora</p>
+          <h1 className="mt-2 text-xl font-semibold">Welcome back</h1>
+          <p className="mt-1 text-sm text-stone-500">Sign in to continue to your account.</p>
+        </div>
 
-        <br />
-        <br />
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+          <div>
+            <label className="label-field" htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleDataChange}
+              className="input-field"
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleDataChange}
-        />
+          <div>
+            <label className="label-field" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={handleDataChange}
+              className="input-field"
+            />
+          </div>
 
-        <br />
-        <br />
+          {error && (
+            <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-600">{error}</p>
+          )}
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+          {success && (
+            <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-600">{success}</p>
+          )}
 
-        {success && <p style={{ color: "green" }}>{success}</p>}
+          <button type="submit" disabled={loading} className="btn-primary w-full">
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Loading..." : "Submit"}
-        </button>
-      </form>
-      <h3>Preview</h3>
-
-      <p>Email: {formData.email}</p>
-
-      <p>Password Length: {formData.password.length}</p>
+        <p className="mt-6 text-center text-sm text-stone-500">
+          Don't have an account?{" "}
+          <Link to="/register" className="font-medium text-rose-600 hover:text-rose-700">
+            Create one
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -8,9 +8,7 @@ function OrderProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // =========================================
-  // FETCH ORDERS
-  // =========================================
+  // Fetch orders
 
   useEffect(() => {
     async function fetchOrderData() {
@@ -39,9 +37,7 @@ function OrderProvider({ children }) {
     fetchOrderData();
   }, []);
 
-  // =========================================
-  // UPDATE ORDER STATUS
-  // =========================================
+  // Update order status
 
   async function updateOrderStatus(id, newStatus) {
     setError(null);
@@ -73,9 +69,7 @@ function OrderProvider({ children }) {
     }
   }
 
-  // =========================================
   // updateOrderPaymentStatus
-  // =========================================
   async function updateOrderPaymentStatus(id, newPaymentStatus) {
     setError(null);
     try {
@@ -102,9 +96,7 @@ function OrderProvider({ children }) {
       setLoading(false);
     }
   }
-  // =========================================
-  // PROVIDER
-  // =========================================
+  // Provider
 
   return (
     <OrderContext.Provider

@@ -1,12 +1,12 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/common/Navbar"; // توجه به   برای import
-import Footer from "../components/common/Footer"; // توجه به { } برای import
+import Navbar from "../components/common/Navbar";
+import Footer from "../components/common/Footer";
 
 function MainLayout() {
   return (
-    <div className="p-6">
+    <div className="flex min-h-screen flex-col bg-ivory">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Outlet />
       </main>
       <Footer />

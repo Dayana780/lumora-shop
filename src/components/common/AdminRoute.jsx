@@ -11,8 +11,6 @@ function AdminRoute() {
 
   useEffect(() => {
     async function getRole() {
-      console.log("USER:", user);
-
       // هنوز AuthContext دارد user را پیدا می‌کند
       if (authLoading) {
         return;
@@ -30,10 +28,8 @@ function AdminRoute() {
         .eq("id", user.id)
         .single();
 
-      console.log("PROFILE DATA:", data);
-      console.log("PROFILE ERROR:", error);
-
       if (error) {
+        console.error("Failed to load user role:", error);
         setRoleLoading(false);
         return;
       }
@@ -44,11 +40,6 @@ function AdminRoute() {
 
     getRole();
   }, [user, authLoading]);
-
-  console.log("USER:", user);
-  console.log("ROLE:", role);
-  console.log("AUTH LOADING:", authLoading);
-  console.log("ROLE LOADING:", roleLoading);
 
   // اول صبر می‌کنیم Auth مشخص کند user داریم یا نه
   if (authLoading) {
@@ -67,11 +58,8 @@ function AdminRoute() {
 
   // user داریم ولی admin نیست
   if (role !== "admin") {
-    console.log("ADMIN ACCESS DENIED");
     return <Navigate to="/" replace />;
   }
-
-  console.log("ADMIN ACCESS GRANTED");
 
   return <Outlet />;
 }

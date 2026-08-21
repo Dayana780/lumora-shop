@@ -1,1 +1,468 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --font-display: "Manrope", Inter, system-ui, sans-serif;
+  --font-sans: "Manrope", Inter, system-ui, sans-serif;
+
+  --color-ivory: #fff9f7;
+  --color-charcoal: #30272a;
+
+  --color-blush-50: #fff0ec;
+  --color-blush-100: #f7d7c8;
+  --color-blush-200: #f5c6cc;
+  --color-cream: #fff4e8;
+
+  --color-rose-50: #fff4f5;
+  --color-rose-100: #fce7ea;
+  --color-rose-200: #f5c6cc;
+  --color-rose-300: #ed9eaa;
+  --color-rose-400: #e17a8a;
+  --color-rose-500: #d85c70;
+  --color-rose-600: #b83f55;
+  --color-rose-700: #963244;
+  --color-rose-800: #7a2836;
+  --color-rose-900: #5e1f2a;
+
+  --color-stone-100: #fff4e8;
+  --color-stone-200: #f0dde0;
+  --color-stone-300: #e6d2d0;
+  --color-stone-500: #776b6d;
+  --color-stone-700: #4d4345;
+
+  --color-success: #6fa27c;
+  --color-error: #d85c5c;
+  --color-warning: #c88755;
+}
+
+:root {
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  font-family: var(--font-sans);
+  background: var(--color-ivory);
+  color: var(--color-charcoal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-sans);
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  line-height: 1.05;
+}
+
+h2,
+h3 {
+  line-height: 1.15;
+}
+
+p {
+  line-height: 1.7;
+}
+
+::selection {
+  background: var(--color-rose-200);
+  color: var(--color-charcoal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-rose-500);
+  outline-offset: 3px;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+
+/* Lumora design system */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-rose-500 px-6 py-3 text-sm font-semibold tracking-[0.01em] text-white shadow-[0_8px_24px_rgba(216,92,112,0.18)] transition-all duration-200;
+  }
+
+  .btn-primary:hover {
+    @apply bg-rose-600 shadow-[0_10px_28px_rgba(184,63,85,0.2)];
+    transform: translateY(-1px);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-rose-500 bg-white px-6 py-3 text-sm font-semibold tracking-[0.01em] text-rose-600 transition-all duration-200;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-rose-50;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-stone-500 transition-all duration-200;
+  }
+
+  .btn-ghost:hover {
+    @apply bg-blush-50 text-rose-600;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-charcoal shadow-[0_1px_2px_rgba(48,39,42,0.025)] placeholder:text-stone-500/70 transition-all duration-200;
+  }
+
+  .input-field:hover {
+    @apply border-stone-300;
+  }
+
+  .input-field:focus {
+    @apply border-rose-500 outline-none ring-4 ring-rose-100;
+  }
+
+  .input-field:disabled {
+    @apply cursor-not-allowed bg-stone-100 opacity-80;
+  }
+
+  .label-field {
+    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-500;
+  }
+
+  .card-surface {
+    @apply rounded-3xl border border-stone-200 bg-white shadow-[0_10px_35px_rgba(48,39,42,0.045)] transition-shadow duration-300;
+  }
+
+  .card-surface:hover {
+    box-shadow: 0 16px 45px rgba(48, 39, 42, 0.065);
+  }
+
+  .section-eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-rose-500;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  /* Utility classes used by the existing pages */
+  .page-shell {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+
+  .soft-section {
+    background: var(--color-blush-50);
+  }
+}
+
+/* Make the existing Tailwind utility palette obey Lumora's final system. */
+.bg-emerald-50 {
+  background-color: #eef6f0 !important;
+}
+.text-emerald-600 {
+  color: var(--color-success) !important;
+}
+.bg-rose-50 {
+  background-color: #fff4f5 !important;
+}
+.text-rose-600 {
+  color: var(--color-rose-600) !important;
+}
+.bg-rose-500 {
+  background-color: var(--color-rose-500) !important;
+}
+.bg-rose-600 {
+  background-color: var(--color-rose-600) !important;
+}
+.text-rose-500 {
+  color: var(--color-rose-500) !important;
+}
+.text-rose-400 {
+  color: var(--color-rose-400) !important;
+}
+.border-rose-200 {
+  border-color: var(--color-rose-200) !important;
+}
+.border-rose-500 {
+  border-color: var(--color-rose-500) !important;
+}
+.text-amber-600 {
+  color: #9a6a43 !important;
+}
+.bg-amber-50 {
+  background-color: #fff4e8 !important;
+}
+.text-sky-600,
+.text-violet-600 {
+  color: var(--color-rose-600) !important;
+}
+.bg-sky-50,
+.bg-violet-50 {
+  background-color: var(--color-blush-50) !important;
+}
+
+/* Global polish for the existing structure */
+main {
+  animation: soft-fade 0.35s ease-out both;
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  text-underline-offset: 3px;
+}
+
+::placeholder {
+  opacity: 1;
+}
+
+@media (max-width: 767px) {
+  h1 {
+    letter-spacing: -0.02em;
+  }
+
+  .card-surface {
+    border-radius: 1.35rem;
+  }
+}
+
+
+/* Compatibility normalization for legacy utility classes.
+   These aliases keep existing behavior intact while bringing older screens
+   into the final Lumora palette without changing component logic. */
+.text-gray-900,
+.text-gray-800 {
+  color: var(--color-charcoal) !important;
+}
+.text-gray-700,
+.text-gray-600,
+.text-gray-500,
+.text-gray-400 {
+  color: var(--color-stone-500) !important;
+}
+.bg-gray-50,
+.bg-gray-100 {
+  background-color: var(--color-ivory) !important;
+}
+.border-gray-100,
+.border-gray-200,
+.border-gray-300,
+.border-gray-400 {
+  border-color: var(--color-stone-200) !important;
+}
+.text-black {
+  color: var(--color-charcoal) !important;
+}
+.bg-black {
+  background-color: var(--color-charcoal) !important;
+}
+.border-black {
+  border-color: var(--color-charcoal) !important;
+}
+.focus\:border-black:focus {
+  border-color: var(--color-rose-500) !important;
+}
+
+/* Semantic status aliases — restricted to Lumora's approved palette. */
+.bg-red-50,
+.bg-red-100 {
+  background-color: var(--color-blush-50) !important;
+}
+.bg-red-200 {
+  background-color: var(--color-soft-pink, #f5c6cc) !important;
+}
+.text-red-700,
+.text-red-600,
+.text-red-500 {
+  color: var(--color-error) !important;
+}
+.border-red-200,
+.border-red-300 {
+  border-color: var(--color-error) !important;
+}
+
+.bg-green-50,
+.bg-green-100 {
+  background-color: var(--color-success) !important;
+}
+.text-green-700,
+.text-green-600,
+.text-green-500 {
+  color: #ffffff !important;
+}
+
+.bg-emerald-50 {
+  background-color: var(--color-blush-50) !important;
+}
+.text-emerald-600 {
+  color: var(--color-success) !important;
+}
+
+.bg-yellow-50,
+.bg-yellow-100 {
+  background-color: var(--color-cream) !important;
+}
+.text-yellow-700,
+.text-yellow-600 {
+  color: var(--color-rose-600) !important;
+}
+
+.bg-blue-50,
+.bg-blue-100 {
+  background-color: var(--color-blush-50) !important;
+}
+.text-blue-700,
+.text-blue-600 {
+  color: var(--color-rose-600) !important;
+}
+
+.bg-purple-50,
+.bg-purple-100 {
+  background-color: var(--color-blush-200) !important;
+}
+.text-purple-700,
+.text-purple-600 {
+  color: var(--color-rose-700) !important;
+}
+
+.bg-sky-50,
+.text-sky-600,
+.bg-violet-50,
+.text-violet-600 {
+  /* Preserve the intended status distinction through warm Lumora tones. */
+}
+.bg-sky-50,
+.bg-violet-50 {
+  background-color: var(--color-blush-50) !important;
+}
+.text-sky-600,
+.text-violet-600 {
+  color: var(--color-rose-600) !important;
+}
+
+.bg-pink-50,
+.bg-pink-100 {
+  background-color: var(--color-blush-50) !important;
+}
+.text-pink-500,
+.text-pink-600 {
+  color: var(--color-rose-500) !important;
+}
+.border-pink-500 {
+  border-color: var(--color-rose-500) !important;
+}
+
+/* Shared controls used by admin and legacy screens. */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  accent-color: var(--color-rose-500);
+}
+input:not([type="checkbox"]):not([type="radio"]):not(.input-field),
+select:not(.input-field),
+textarea:not(.input-field) {
+  border-color: var(--color-stone-200);
+  background: var(--color-white, #ffffff);
+  color: var(--color-charcoal);
+  border-radius: 0.75rem;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-rose-500);
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(216, 92, 112, 0.10);
+}
+
+/* Consistent native buttons on legacy screens. */
+button:not(.btn-primary):not(.btn-secondary):not(.btn-ghost) {
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease,
+    box-shadow 180ms ease, transform 180ms ease, opacity 180ms ease;
+}
+button.bg-black:hover {
+  background-color: var(--color-rose-600) !important;
+}
+button.bg-black:focus-visible {
+  outline: 2px solid var(--color-rose-500);
+  outline-offset: 3px;
+}
+
+/* Keep page-level surfaces consistent in both storefront and admin. */
+.bg-stone-100 {
+  background-color: var(--color-ivory) !important;
+}
+.text-stone-700 {
+  color: var(--color-charcoal) !important;
+}
+.border-stone-300 {
+  border-color: var(--color-stone-200) !important;
+}
+
+@media (max-width: 767px) {
+  .page-shell {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    min-height: 2.75rem;
+  }
+}
