@@ -129,7 +129,10 @@ function Shop() {
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Search size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-stone-500" />
+          <Search
+            size={16}
+            className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-stone-500"
+          />
           <input
             value={search}
             onChange={handleSearch}
@@ -138,7 +141,11 @@ function Shop() {
           />
         </div>
 
-        <select value={sortBy} onChange={handleSort} className="input-field w-full sm:w-auto">
+        <select
+          value={sortBy}
+          onChange={handleSort}
+          className="input-field w-full sm:w-auto"
+        >
           <option value="">Sort: Default</option>
           <option value="low">Price: Low to High</option>
           <option value="high">Price: High to Low</option>
@@ -150,7 +157,9 @@ function Shop() {
       {sortedProducts.length === 0 ? (
         <div className="card-surface mt-10 flex flex-col items-center gap-2 px-6 py-16 text-center">
           <p className="font-medium text-charcoal">No products found</p>
-          <p className="text-sm text-stone-500">Try a different search term or clear your filters.</p>
+          <p className="text-sm text-stone-500">
+            Try a different search term or clear your filters.
+          </p>
         </div>
       ) : (
         <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">

@@ -229,7 +229,7 @@ function ProductForm({ addProduct, updateProduct, onClose, selectedProduct }) {
                 disabled={loading}
               />
 
-              <span>تومان</span>
+              <span>$</span>
             </div>
           </div>
 

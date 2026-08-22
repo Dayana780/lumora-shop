@@ -164,7 +164,7 @@ function OrderTable({ orders }) {
                     <td>
                       <div className="lumora-order-price">
                         {Number(order.total_price).toLocaleString()}
-                        <span> تومان</span>
+                        <span> $</span>
                       </div>
                     </td>
 

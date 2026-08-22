@@ -34,8 +34,8 @@ async function getDashboardData() {
 
   const { count: productsCount, error: productsError } = await supabase
     .from("products")
-    .select("*", { count: "exact", head: true });
-
+    .select("*", { count: "exact", head: true })
+    .eq("is_active", true);
   if (productsError) {
     throw productsError;
   }
@@ -152,7 +152,7 @@ function Dashboard() {
     },
     {
       label: "Revenue",
-      value: `${data.revenue.toLocaleString()} تومان`,
+      value: `${data.revenue.toLocaleString()} $`,
       icon: Wallet,
       iconBg: "bg-emerald-50",
       iconColor: "text-emerald-500",
@@ -259,7 +259,7 @@ function Dashboard() {
                   <div className="flex items-center justify-between gap-4 sm:justify-end">
                     <div className="text-left sm:text-right">
                       <p className="font-semibold text-stone-800">
-                        {Number(order.total_price).toLocaleString()} تومان
+                        {Number(order.total_price).toLocaleString()} $
                       </p>
 
                       <p className="mt-1 text-xs text-stone-400">

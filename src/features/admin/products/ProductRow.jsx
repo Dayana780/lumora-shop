@@ -22,7 +22,7 @@ function ProductRow({ product, onDelete, onEdit }) {
       <td>
         <span className="lumora-product-price">{price.toLocaleString()}</span>
 
-        <span className="lumora-product-currency">تومان</span>
+        <span className="lumora-product-currency">$</span>
       </td>
 
       {/* CATEGORY */}

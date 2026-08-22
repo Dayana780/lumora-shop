@@ -471,7 +471,7 @@ function CustomerOrderDetails() {
 
           <div className="lumora-summary-total">
             <span>Total</span>
-            <strong>{Number(order.total_price).toLocaleString()} تومان</strong>
+            <strong>{Number(order.total_price).toLocaleString()} $</strong>
           </div>
         </section>
 
@@ -520,7 +520,7 @@ function CustomerOrderDetails() {
                           <span>
                             Price:{" "}
                             <strong>
-                              {Number(item.price).toLocaleString()} تومان
+                              {Number(item.price).toLocaleString()} $
                             </strong>
                           </span>
                         </div>
@@ -529,7 +529,7 @@ function CustomerOrderDetails() {
                       <div className="lumora-product-subtotal">
                         <span>Subtotal</span>
 
-                        <strong>{subtotal.toLocaleString()} تومان</strong>
+                        <strong>{subtotal.toLocaleString()} $</strong>
                       </div>
                     </article>
                   );

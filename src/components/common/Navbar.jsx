@@ -1,7 +1,14 @@
 import { Link, NavLink } from "react-router-dom";
 import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Heart, LayoutDashboard, Menu, ShoppingBag, User, X } from "lucide-react";
+import {
+  Heart,
+  LayoutDashboard,
+  Menu,
+  ShoppingBag,
+  User,
+  X,
+} from "lucide-react";
 
 import { useCart } from "../../context/CartContext";
 import { WishlistContext } from "../../context/WishlistContext";
@@ -61,13 +68,21 @@ function Navbar() {
       </div>
 
       <nav className="mx-auto flex max-w-6xl items-center justify-between border-b border-stone-200 px-4 py-4 sm:px-6">
-        <Link to="/" className="font-display text-2xl font-semibold tracking-wide text-charcoal">
+        <Link
+          to="/"
+          className="font-display text-2xl font-semibold tracking-wide text-charcoal"
+        >
           Lumora
         </Link>
 
         <div className="hidden items-center gap-9 md:flex">
           {navLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} className={linkClass} end={link.to === "/"}>
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={linkClass}
+              end={link.to === "/"}
+            >
               {link.label}
             </NavLink>
           ))}
@@ -197,15 +212,26 @@ function Navbar() {
 
             {user ? (
               <div className="mt-3 flex items-center justify-between">
-                <Link to="/profile" className="text-sm font-medium text-charcoal/80" onClick={() => setMenuOpen(false)}>
+                <Link
+                  to="/profile"
+                  className="text-sm font-medium text-charcoal/80"
+                  onClick={() => setMenuOpen(false)}
+                >
                   My Profile
                 </Link>
-                <button onClick={logout} className="text-sm font-medium text-rose-600">
+                <button
+                  onClick={logout}
+                  className="text-sm font-medium text-rose-600"
+                >
                   Logout
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="btn-primary mt-3 w-full" onClick={() => setMenuOpen(false)}>
+              <Link
+                to="/login"
+                className="btn-primary mt-3 w-full"
+                onClick={() => setMenuOpen(false)}
+              >
                 Login
               </Link>
             )}

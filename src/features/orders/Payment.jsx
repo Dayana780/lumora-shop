@@ -198,7 +198,7 @@ function Payment() {
             <span className="text-gray-500">Total</span>
 
             <span className="text-lg font-bold">
-              {Number(order.total_price).toLocaleString()} تومان
+              {Number(order.total_price).toLocaleString()} $
             </span>
           </div>
 
@@ -230,7 +230,7 @@ function Payment() {
         >
           {paymentMutation.isPending
             ? "Processing Payment..."
-            : `Pay ${Number(order.total_price).toLocaleString()} تومان`}
+            : `Pay ${Number(order.total_price).toLocaleString()} $`}
         </button>
       </div>
     </div>

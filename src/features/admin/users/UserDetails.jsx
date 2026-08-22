@@ -316,7 +316,7 @@ function UserDetails() {
                   <div className="lumora-order-price">
                     <span>TOTAL</span>
                     <strong>
-                      {Number(order.total_price).toLocaleString()} تومان
+                      {Number(order.total_price).toLocaleString()} $
                     </strong>
                   </div>
                 </div>

@@ -411,7 +411,7 @@ function OrderDetails() {
             <p className="text-sm text-gray-500">Total</p>
 
             <p className="mt-1 text-lg font-bold text-gray-900">
-              {Number(order.total_price).toLocaleString()} تومان
+              {Number(order.total_price).toLocaleString()} $
             </p>
           </div>
         </div>
@@ -582,7 +582,7 @@ function OrderDetails() {
                       </p>
 
                       <p className="mt-1 text-sm text-gray-500">
-                        Unit Price: {Number(item.price).toLocaleString()} تومان
+                        Unit Price: {Number(item.price).toLocaleString()} $
                       </p>
                     </div>
                   </div>
@@ -591,7 +591,7 @@ function OrderDetails() {
                     <p className="text-sm text-gray-500">Item Total</p>
 
                     <p className="mt-1 font-semibold text-gray-900">
-                      {itemTotal.toLocaleString()} تومان
+                      {itemTotal.toLocaleString()} $
                     </p>
                   </div>
                 </div>
@@ -608,14 +608,14 @@ function OrderDetails() {
               <span className="text-gray-500">Items Subtotal</span>
 
               <span className="font-medium">
-                {itemsTotal.toLocaleString()} تومان
+                {itemsTotal.toLocaleString()} $
               </span>
             </div>
 
             <div className="flex justify-between border-t pt-3 text-lg font-bold">
               <span>Total</span>
 
-              <span>{Number(order.total_price).toLocaleString()} تومان</span>
+              <span>{Number(order.total_price).toLocaleString()} $</span>
             </div>
           </div>
         </div>
